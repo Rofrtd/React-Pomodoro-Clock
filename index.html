@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <title></title>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script crossorigin src="lib/react.1.js"></script>
+    <script crossorigin src="lib/react-dom.development.js"></script>
+    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+    <script type="text/javascript">
+
+      const e = React.createElement;
+      const Header = () => e('h1', {id: 'header'}, 'React Pomodoro Clock');
+
+      const SetTimer = ({type, value}) => (
+        e('div', {className: 'setTimer'},
+          e('div', {id: type + '-label'}, type + ' length'),
+          e('div', {className: 'setTimer-controls'},
+            e('button', {id: type + '-decrement'}, '\u2193'),
+            e('div', {id: type + '-length'}, value),
+            e('button', {id: type + '-increment'}, '\u2191'),
+          )
+        )
+      )
+
+      const Timer = ({mode, time}) => (
+        e('div', {className: 'timer'},
+          e('h1', {id:'timer-label'}, mode === 'session' ? 'Session' : 'Break'),
+          e('h1', {id: 'time-left'}, time)
+        )
+      )
+
+      const Controls = ({active}) => (
+        e('div', {className: 'controls'},
+          e('button', {id: 'start_stop'}, active ? e('span', null, '\u275A', '\u275A') : e('span', null, '\u25B6')),
+          e('button', {id: 'reset'}, '\u21bb')
+        )
+      )
+
+      class App extends React.Component{
+        constructor(props){
+          super(props)
+          this.state = {
+            breakValue: 5,
+            sessionValue: 25,
+            mode: 'session',
+            time: 25 * 60 * 1000,
+            active: false
+          }
+        }
+          render(){
+            return(
+              e('div', {id:'wrapper'},
+                e(Header),
+                e('div', {className: 'settings'},
+                  e(SetTimer, {type: 'break', value: this.state.breakValue}),
+                  e(SetTimer, {type: 'session', value: this.state.sessionValue})),
+                e(Timer, {mode: this.state.mode, time: moment(this.state.time).format('mm:ss')}),
+                e(Controls, {active: this.state.active}),
+              )
+            )
+          }
+        }
+
+
+
+
+    ReactDOM.render(e(App), document.getElementById('app'));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+#header{
+  justify-content: center;
+  display: flex;
+}
+.setTimer-controls{
+  align-items: center;
+  background-color: lightgrey;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+}
