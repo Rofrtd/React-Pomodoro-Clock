@@ -48,7 +48,7 @@
           super(props)
           this.state = {
             breakValue: 5,
-            sessionValue: 25,
+            sessionValue: .1,
             mode: 'session',
             time: 25 * 60 * 1000,
             active: false,
@@ -129,7 +129,7 @@
                 e(Timer, {mode: this.state.mode, time: moment(this.state.time).format('mm:ss')}),
                 e(Controls, {active: this.state.active, handleReset: this.handleReset, handlePlayPause: this.handlePlayPause}),
                 // e('pre', null, JSON.stringify(this.state,null,2)),
-                e('audio', {id: 'beep', src: '/lib/Rooster.mp3', ref: (el => this.audio = el)},)
+                e('audio', {id: 'beep', src: 'http://www.whydidthechickencrosstheroad.com/sounds/roosters/rooster11.wav', ref: (el => this.audio = el)},)
               )
             )
           }
