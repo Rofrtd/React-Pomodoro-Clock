@@ -129,7 +129,7 @@
                 e(Timer, {mode: this.state.mode, time: moment(this.state.time).format('mm:ss')}),
                 e(Controls, {active: this.state.active, handleReset: this.handleReset, handlePlayPause: this.handlePlayPause}),
                 // e('pre', null, JSON.stringify(this.state,null,2)),
-                e('audio', {id: 'beep', src: '/lib/Rooster.wav', ref: (el => this.audio = el)},)
+                e('audio', {id: 'beep', src: '/lib/Rooster.mp3', ref: (el => this.audio = el)},)
               )
             )
           }
