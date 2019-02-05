@@ -2,10 +2,19 @@
   justify-content: center;
   display: flex;
 }
-.setTimer-controls{
+.setTimer{
   align-items: center;
   background-color: lightgrey;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
+}
+
+.settings{
+  display: flex;
+  flex-direction: row;
+}
+
+#wrapper{
+  background: lightblue;
 }

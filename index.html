@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
     <title></title>
   </head>
   <body>
@@ -10,21 +10,21 @@
 
     <script crossorigin src="lib/react.1.js"></script>
     <script crossorigin src="lib/react-dom.development.js"></script>
-    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="lib/bundle-FCC.js"></script>
+    <script src="lib/moment.min.js"></script>
 
     <script type="text/javascript">
 
       const e = React.createElement;
       const Header = () => e('h1', {id: 'header'}, 'React Pomodoro Clock');
 
-      const SetTimer = ({type, value}) => (
+      const SetTimer = ({type, value, handleClick}) => (
         e('div', {className: 'setTimer'},
           e('div', {id: type + '-label'}, type + ' length'),
           e('div', {className: 'setTimer-controls'},
-            e('button', {id: type + '-decrement'}, '\u2193'),
+            e('button', {id: type + '-decrement', onClick: () => handleClick(false, type + 'Value')}, '\u2193'),
             e('div', {id: type + '-length'}, value),
-            e('button', {id: type + '-increment'}, '\u2191'),
+            e('button', {id: type + '-increment', onClick: () => handleClick(true, type + 'Value')}, '\u2191'),
           )
         )
       )
@@ -36,10 +36,10 @@
         )
       )
 
-      const Controls = ({active}) => (
+      const Controls = ({active, handleReset, handlePlayPause}) => (
         e('div', {className: 'controls'},
-          e('button', {id: 'start_stop'}, active ? e('span', null, '\u275A', '\u275A') : e('span', null, '\u25B6')),
-          e('button', {id: 'reset'}, '\u21bb')
+          e('button', {id: 'start_stop', onClick: handlePlayPause}, active ? e('span', null, '\u275A', '\u275A') : e('span', null, '\u25B6')),
+          e('button', {id: 'reset', onClick: handleReset}, '\u21bb')
         )
       )
 
@@ -51,23 +51,89 @@
             sessionValue: 25,
             mode: 'session',
             time: 25 * 60 * 1000,
-            active: false
+            active: false,
+            touched: false,
           }
+          this.handleSetTimers = this.handleSetTimers.bind(this);
+          this.handleReset = this.handleReset.bind(this);
+          this.handlePlayPause = this.handlePlayPause.bind(this)
         }
+
+        componentDidUpdate(prevProps, prevState){
+          if(prevState.time == 0 && prevState.mode == 'session'){
+            this.setState({
+              time: this.state.breakValue * 60 * 1000,
+              mode: 'break'
+            })
+            this.audio.play()
+          }
+          if(prevState.time == 0 && prevState.mode == 'break'){
+            this.setState({
+              time: this.state.sessionValue * 60 * 1000,
+              mode: 'session'
+            })
+            this.audio.play()
+        }
+
+      }
+
+        handleSetTimers(inc, type){
+          if(this.state[type] == 60 & inc) return
+          if(this.state[type] == 1 & !inc) return
+          this.setState({ [type]: this.state[type] + (inc ? 1 : -1) })
+        }
+
+        handleReset(){
+          this.setState({
+            breakValue: 5,
+            sessionValue: 25,
+            time: 25 * 60 * 1000,
+            mode: 'session',
+            active: false,
+            touched: false
+          })
+          clearInterval(this.pomodoro)
+          this.audio.pause()
+          this.audio.currentTime = 0
+        }
+
+        handlePlayPause(){
+          if(this.state.active){
+            clearInterval(this.pomodoro)
+            this.setState({active: false})
+          }else {
+              if(this.state.touched){
+                this.pomodoro = setInterval(() => this.setState({time: this.state.time - 1000}), 1000)
+                this.setState({active: true})
+              }else{
+                this.setState({
+                  time: this.state.sessionValue * 60 * 1000,
+                  touched: true,
+                  active: true
+                }, () => this.pomodoro = setInterval(() => this.setState({time: this.state.time - 1000}), 1000))
+              }
+
+          }
+
+
+        }
+
+
           render(){
             return(
               e('div', {id:'wrapper'},
                 e(Header),
                 e('div', {className: 'settings'},
-                  e(SetTimer, {type: 'break', value: this.state.breakValue}),
-                  e(SetTimer, {type: 'session', value: this.state.sessionValue})),
+                  e(SetTimer, {type: 'break', value: this.state.breakValue, handleClick: this.handleSetTimers}),
+                  e(SetTimer, {type: 'session', value: this.state.sessionValue, handleClick: this.handleSetTimers})),
                 e(Timer, {mode: this.state.mode, time: moment(this.state.time).format('mm:ss')}),
-                e(Controls, {active: this.state.active}),
+                e(Controls, {active: this.state.active, handleReset: this.handleReset, handlePlayPause: this.handlePlayPause}),
+                // e('pre', null, JSON.stringify(this.state,null,2)),
+                e('audio', {id: 'beep', src: '/lib/Rooster.wav', ref: (el => this.audio = el)},)
               )
             )
           }
         }
-
 
 
 
